@@ -1,21 +1,39 @@
-version: '3'
+version: "3.9"
 
 services:
-###> doctrine/doctrine-bundle ###
-  database:
-    image: postgres:${POSTGRES_VERSION:-13}-alpine
-    environment:
-      POSTGRES_DB: ${POSTGRES_DB:-app}
-      # You should definitely change the password in production
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-ChangeMe}
-      POSTGRES_USER: ${POSTGRES_USER:-symfony}
-    volumes:
-      - db-data:/var/lib/postgresql/data:rw
-      # You may use a bind-mounted host directory instead, so that it is harder to accidentally remove the volume and lose all your data!
-      # - ./docker/db/data:/var/lib/postgresql/data:rw
-###< doctrine/doctrine-bundle ###
 
-volumes:
-###> doctrine/doctrine-bundle ###
-  db-data:
-###< doctrine/doctrine-bundle ###
+  mysql:
+    image: mariadb:latest
+    container_name: mysql
+    restart: always
+    environment:
+      MYSQL_DATABASE: stsdb
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_PASSWORD: stspassw
+      MYSQL_USER: stsuser
+    networks:
+      - sts_network
+    volumes:
+      - ../var/mariadb/:/var/lib/mysql
+      - ../var/log/mariadb:/var/log/mysql
+    ports:
+      - "8889:3306"
+
+  php:
+    container_name: php
+    depends_on:
+      - mysql
+    build:
+      context: .
+      dockerfile: docker/php.Dockerfile
+    ports:
+      - "8080:80"
+    volumes:
+      - .:/var/www
+    networks:
+      - sts_network
+
+networks:
+  sts_network:
+    driver: bridge
+    name: sts_network
