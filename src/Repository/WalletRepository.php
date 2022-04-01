@@ -26,4 +26,13 @@ final class WalletRepository extends ServiceEntityRepository
 
         $this->logger->notice("New wallet was added to the database with id: " . $wallet->getId());
     }
+
+    public function update(Wallet $wallet): void
+    {
+        $this->_em->persist($wallet);
+        $this->_em->flush();
+
+        $this->logger->notice("The wallet with id: " . $wallet->getId() . ' was updated');
+    }
+
 }
