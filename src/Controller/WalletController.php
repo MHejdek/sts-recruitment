@@ -14,11 +14,8 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route(path: '/wallet', name: 'wallet_')]
 class WalletController extends AbstractController
 {
-    private WalletRepository $walletRepository;
-
-    public function __construct(WalletRepository $walletRepository)
+    public function __construct(private WalletRepository $walletRepository)
     {
-        $this->walletRepository = $walletRepository;
     }
 
     #[Route(path: '/create', name: 'create')]
