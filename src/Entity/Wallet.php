@@ -24,4 +24,9 @@ class Wallet
         $this->amount = $amount;
     }
 
+    public function getId(): int
+    {
+        return $this->id;
+    }
+
 }
