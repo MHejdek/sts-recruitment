@@ -27,4 +27,19 @@ class Operation
         $this->type = $type;
     }
 
+    public function getId(): int
+    {
+        return $this->id;
+    }
+
+    public function getWalletId(): int
+    {
+        return $this->walletId;
+    }
+
+    public function getType(): string
+    {
+        return $this->type;
+    }
+
 }

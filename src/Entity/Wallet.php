@@ -30,10 +30,10 @@ class Wallet
     )]
     private Collection $operations;
 
-    #[Pure] public function __construct(int $amount)
+    #[Pure] public function __construct()
     {
         $this->operations = new ArrayCollection();
-        $this->amount = $amount;
+        $this->amount = 0;
     }
 
     public function getId(): int

@@ -6,6 +6,7 @@ namespace App\Repository;
 
 use App\Entity\Wallet;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\Persistence\ManagerRegistry;
 
 final class WalletRepository extends ServiceEntityRepository
@@ -25,6 +26,12 @@ final class WalletRepository extends ServiceEntityRepository
     {
         $this->_em->persist($wallet);
         $this->_em->flush();
+    }
+
+    public function getOperations(int $walletId): Collection
+    {
+        $wallet = $this->find($walletId);
+        return $wallet->getOperations();
     }
 
 }
