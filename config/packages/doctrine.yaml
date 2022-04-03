@@ -1,6 +1,6 @@
 doctrine:
     dbal:
-        auto_commit: false
+#        auto_commit: false
         url: '%env(resolve:DATABASE_URL)%'
 
         # IMPORTANT: You MUST configure your server version,
