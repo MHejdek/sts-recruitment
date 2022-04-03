@@ -8,6 +8,8 @@ use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\ORM\Mapping\Id;
+use Doctrine\ORM\Mapping\JoinColumn;
+use Doctrine\ORM\Mapping\ManyToOne;
 
 #[Entity]
 class Operation
@@ -15,16 +17,20 @@ class Operation
     #[Id, GeneratedValue, Column(type: 'integer')]
     private int $id;
 
-    #[Column(type: 'integer')]
-    private int $walletId;
-
     #[Column(type: 'string')]
     private string $type;
 
-    public function __construct(int $walletId, string $type)
+    #[Column(type: 'integer')]
+    private int $amount;
+
+    #[ManyToOne(targetEntity: Wallet::class, inversedBy: 'operations')]
+    #[JoinColumn(name: 'wallet', referencedColumnName: 'id', nullable: false)]
+    private Wallet $wallet;
+
+    public function __construct(string $type, int $amount)
     {
-        $this->walletId = $walletId;
         $this->type = $type;
+        $this->amount = $amount;
     }
 
     public function getId(): int
@@ -32,14 +38,20 @@ class Operation
         return $this->id;
     }
 
-    public function getWalletId(): int
-    {
-        return $this->walletId;
-    }
-
     public function getType(): string
     {
         return $this->type;
+    }
+
+    public function getAmount(): int
+    {
+        return $this->amount;
+    }
+
+    public function setWallet(Wallet $wallet): void
+    {
+        $wallet->addOperation($this);
+        $this->wallet = $wallet;
     }
 
 }

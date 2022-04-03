@@ -6,12 +6,15 @@ namespace App\Repository;
 
 use App\Entity\Wallet;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\Persistence\ManagerRegistry;
+use Psr\Log\LoggerInterface;
 
-final class WalletRepository extends ServiceEntityRepository
+class WalletRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(
+        ManagerRegistry $registry,
+        private LoggerInterface $logger
+    )
     {
         parent::__construct($registry, Wallet::class);
     }
@@ -20,18 +23,26 @@ final class WalletRepository extends ServiceEntityRepository
     {
         $this->_em->persist($wallet);
         $this->_em->flush();
+
+        $this->logger->notice(
+            sprintf(
+                'New wallet with id: %d was create.',
+                $wallet->getId()
+            )
+        );
     }
 
     public function update(Wallet $wallet): void
     {
         $this->_em->persist($wallet);
         $this->_em->flush();
-    }
 
-    public function getOperations(int $walletId): Collection
-    {
-        $wallet = $this->find($walletId);
-        return $wallet->getOperations();
+        $this->logger->notice(
+            sprintf(
+                'Wallet with id: %d was updated.',
+                $wallet->getId()
+            )
+        );
     }
 
 }

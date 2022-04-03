@@ -23,11 +23,7 @@ class Wallet
     #[Column(type: 'integer')]
     private int $amount;
 
-    #[OneToMany(
-        mappedBy: 'wallet_id',
-        targetEntity: Operation::class,
-        cascade: ['persist'],
-    )]
+    #[OneToMany(mappedBy: 'wallet', targetEntity: Operation::class, cascade: ['persist'])]
     private Collection $operations;
 
     #[Pure] public function __construct()
@@ -44,6 +40,11 @@ class Wallet
     public function getAmount(): int
     {
         return $this->amount;
+    }
+
+    public function getOperations(): Collection
+    {
+        return $this->operations;
     }
 
     public function setAmount(int $amount): void

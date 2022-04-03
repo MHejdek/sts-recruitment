@@ -12,7 +12,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 
 #[Route(
-    path: '/wallet',
+    path: '/api/wallet',
     name: 'wallet_'
 )]
 class WalletController extends AbstractController
@@ -24,52 +24,82 @@ class WalletController extends AbstractController
     {
     }
 
-    #[Route(
-        path: '/create',
-        name: 'create'
-    )]
+    #[Route(path: '/create', name: 'create')]
     public function createWallet(): Response
     {
         $wallet = new Wallet();
+        // persist new wallet to the database
         $this->walletRepository->create($wallet);
 
-        return new Response('Wallet with id: ' . $wallet->getId() . ' was created.');
+        return new Response(
+            sprintf(
+                'Wallet with id: %d was created.',
+                $wallet->getId()
+            )
+        );
     }
 
     #[Route(
-        path: '/add-amount/{id}/{amount}',
+        path: '/add-amount/{id}/{amountToAdd}',
         name: 'add_amount',
-        requirements: ['amount' => '\d+', 'id' => '\d+'],
+        requirements: [
+            'id' => '\d+',
+            'amountToAdd' => '\d+',
+        ]
     )]
-    public function addAmount(Wallet $wallet, int $amount): Response
+    public function addAmount(Wallet $wallet, int $amountToAdd): Response
     {
-        $wallet = $this->walletManager->updateWallet($wallet, 'addition', $amount );
+        // run wallet updates: setAmount + addOperation
+        $this->walletManager->addAmountToWallet($wallet, $amountToAdd);
+        // persist updated wallet to the database
         $this->walletRepository->update($wallet);
 
-        return new Response('The amount in wallet with id: ' . $wallet->getId() . ' was updated.');
+        return new Response(
+            sprintf(
+                'The amount: %d was added to wallet with id: %d was updated.',
+                $amountToAdd, $wallet->getId()
+            )
+        );
     }
 
     #[Route(
-        path: '/substract-amount/{id}/{amount}',
+        path: '/substract-amount/{id}/{amountToSubstract}',
         name: 'substract_amount',
-        requirements: ['amount' => '\d+', 'id' => '\d+'],
+        requirements: [
+            'id' => '\d+',
+            'amountToAdd' => '\d+',
+        ]
     )]
-    public function substractAmount(Wallet $wallet, int $amount): Response
+    public function substractAmount(Wallet $wallet, int $amountToSubstract): Response
     {
-        $wallet = $this->walletManager->updateWallet($wallet, 'substraction', $amount );
+        // run wallet updates: setAmount + addOperation
+        $this->walletManager->substractAmountFromWallet($wallet, $amountToSubstract);
+        // persist updated wallet to the database
         $this->walletRepository->update($wallet);
 
-        return new Response('The amount in wallet with id: ' . $wallet->getId() . ' was updated.');
+        return new Response(
+            sprintf(
+                'The amount: %d was substracted from wallet with id: %d was updated.',
+                $amountToSubstract, $wallet->getId()
+            )
+        );
     }
 
     #[Route(
         path: '/get-amount/{id}',
         name: 'get_amount',
-        requirements: ['id' => '\d+'],
+        requirements: [
+            'walletId' => '\d+',
+        ]
     )]
     public function getAmount(Wallet $wallet): Response
     {
-        return new Response('The amount on account equals: ' . $wallet->getAmount());
+        return new Response(
+            sprintf(
+                'The amount on account equals: %d',
+                $wallet->getAmount()
+            )
+        );
     }
 
 }

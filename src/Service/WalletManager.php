@@ -9,20 +9,22 @@ use App\Entity\Wallet;
 
 class WalletManager
 {
-    public function updateWallet(Wallet $wallet, string $type, int $amount): Wallet
+    public function addAmountToWallet(Wallet $wallet, int $amount): void
     {
-        if ($type === 'addition') $wallet->setAmount($wallet->getAmount() + $amount);
-        if ($type === 'substraction') $wallet->setAmount($wallet->getAmount() - $amount);
-
-        return $this->addOperationToWallet($wallet, $type);
+        $wallet->setAmount($wallet->getAmount() + $amount);
+        $this->addOperationToWallet($wallet, 'addition', $amount);
     }
 
-    private function addOperationToWallet(Wallet $wallet, string $type): Wallet
+    public function substractAmountFromWallet(Wallet $wallet, int $amount): void
     {
-        $operation = new Operation($wallet->getId(), $type);
-        $wallet->addOperation($operation);
+        $wallet->setAmount($wallet->getAmount() - $amount);
+        $this->addOperationToWallet($wallet, 'substraction', $amount);
+    }
 
-        return $wallet;
+    private function addOperationToWallet(Wallet $wallet, string $type, int $amount): void
+    {
+        $operation = new Operation($type, $amount);
+        $operation->setWallet($wallet);
     }
 
 }
