@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Command;
 
 use App\Repository\WalletRepository;
-use App\Service\FileExporter;
 use App\Service\OperationCollectionExporter;
 use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -13,7 +12,6 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Question\Question;
 
 #[AsCommand(
     name: 'app:export-operations-to-csv',
@@ -26,7 +24,8 @@ class ExportOperationsToCsvCommand extends Command
     public function __construct(
         private OperationCollectionExporter $operationExporter,
         private WalletRepository $walletRepository,
-        string $name = null)
+        string $name = null
+    )
     {
         parent::__construct($name);
     }
@@ -65,7 +64,7 @@ class ExportOperationsToCsvCommand extends Command
     {
         $wallet = $this->walletRepository->find($walletId);
 
-        if (!$wallet) throw new \Exception(sprintf('No wallet found for given id: %d', $walletId));
+        if (!$wallet) throw new \Exception('No wallet found for given id.');
 
         $operations = $wallet->getOperations();
 

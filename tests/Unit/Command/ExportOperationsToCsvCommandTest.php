@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Command;
+namespace App\Tests\Unit\Command;
 
 use App\Command\ExportOperationsToCsvCommand;
 use App\Entity\Operation;
@@ -29,23 +29,23 @@ class ExportOperationsToCsvCommandTest extends KernelTestCase
         $operation->method('getAmount')->willReturn(321);
         $wallet->addOperation($operation);
 
-        // mock the wallet repository so it will return a wallet created above
-        $walletRepositoryMock = $this->createMock(WalletRepository::class);
-        $walletRepositoryMock->method('find')->with()->willReturn($wallet);
-
         // mock filesystem to dump to file
         $filesystemMock = $this->createMock(Filesystem::class);
 
-        // initiate operationMapper service which maps Operation Collection to csv string
-        $operationMapper = new OperationCollectionMapper();
+        // initiate operationCollectionMapper service which maps Operation Collection to csv string
+        $operationCollectionMapper = new OperationCollectionMapper();
 
-        // initiate operationExporter service which runs an export in method exportOperations()
-        $operationExporter = new OperationCollectionExporter($filesystemMock, $operationMapper);
+        // initiate operationCollectionExporter service which runs an export in method exportToCsv()
+        $operationCollectionExporter = new OperationCollectionExporter($filesystemMock, $operationCollectionMapper);
+
+        // mock the wallet repository so it will return a wallet created above
+        $walletRepositoryMock = $this->createMock(WalletRepository::class);
+        $walletRepositoryMock->method('find')->with(1)->willReturn($wallet);
 
         // define some basic test command setup
         $kernel = self::bootKernel();
         $application = new Application($kernel);
-        $application->add(new ExportOperationsToCsvCommand($operationExporter, $walletRepositoryMock));
+        $application->add(new ExportOperationsToCsvCommand($operationCollectionExporter, $walletRepositoryMock));
         $command = $application->find('app:export-csv');
         $this->commandTester = new CommandTester($command);
     }

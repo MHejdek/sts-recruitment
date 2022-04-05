@@ -24,7 +24,10 @@ class WalletController extends AbstractController
     {
     }
 
-    #[Route(path: '/create', name: 'create')]
+    #[Route(
+        path: '/create',
+        name: 'create'
+    )]
     public function createWallet(): Response
     {
         $wallet = new Wallet();
@@ -33,54 +36,56 @@ class WalletController extends AbstractController
 
         return new Response(
             sprintf(
-                'Wallet with id: %d was created.',
+                'Wallet with id: %d was created',
                 $wallet->getId()
             )
         );
     }
 
     #[Route(
-        path: '/add-amount/{id}/{amountToAdd}',
+        path: '/add-amount/{id}/{amount}',
         name: 'add_amount',
         requirements: [
             'id' => '\d+',
-            'amountToAdd' => '\d+',
+            'amount' => '\d+',
         ]
     )]
-    public function addAmount(Wallet $wallet, int $amountToAdd): Response
+    public function addAmount(Wallet $wallet, int $amount): Response
     {
         // run wallet updates: setAmount + addOperation
-        $this->walletManager->addAmountToWallet($wallet, $amountToAdd);
+        $this->walletManager->updateWallet($wallet, $amount, 'addition');
         // persist updated wallet to the database
         $this->walletRepository->update($wallet);
 
         return new Response(
             sprintf(
-                'The amount: %d was added to wallet with id: %d was updated.',
-                $amountToAdd, $wallet->getId()
+                'The amount: %d was added to wallet with id: %d',
+                $amount,
+                $wallet->getId()
             )
         );
     }
 
     #[Route(
-        path: '/subtract-amount/{id}/{amountToSubtract}',
+        path: '/subtract-amount/{id}/{amount}',
         name: 'subtract_amount',
         requirements: [
             'id' => '\d+',
-            'amountToAdd' => '\d+',
+            'amount' => '\d+',
         ]
     )]
-    public function subtractAmount(Wallet $wallet, int $amountToSubtract): Response
+    public function subtractAmount(Wallet $wallet, int $amount): Response
     {
         // run wallet updates: setAmount + addOperation
-        $this->walletManager->subtractAmountFromWallet($wallet, $amountToSubtract);
+        $this->walletManager->updateWallet($wallet, $amount, 'subtraction');
         // persist updated wallet to the database
         $this->walletRepository->update($wallet);
 
         return new Response(
             sprintf(
-                'The amount: %d was subtracted from wallet with id: %d was updated.',
-                $amountToSubtract, $wallet->getId()
+                'The amount: %d was subtracted from wallet with id: %d',
+                $amount,
+                $wallet->getId()
             )
         );
     }
@@ -96,7 +101,8 @@ class WalletController extends AbstractController
     {
         return new Response(
             sprintf(
-                'The amount on account equals: %d',
+                'The amount in wallet with id: %d equals: %d',
+                $wallet->getId(),
                 $wallet->getAmount()
             )
         );

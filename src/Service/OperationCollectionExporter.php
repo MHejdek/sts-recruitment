@@ -23,4 +23,3 @@ class OperationCollectionExporter implements EntityCollectionExporterInterface
     }
 
 }
-

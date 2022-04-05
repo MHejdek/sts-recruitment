@@ -7,17 +7,11 @@ namespace App\Service;
 use App\Entity\Operation;
 use Doctrine\Common\Collections\Collection;
 
-class OperationCollectionMapper implements EntityCollectionMapperInterface
+class OperationCollectionMapper extends AbstractEntityCollectionMapper
 {
-    public function mapToCsv(Collection $collection): string
+    protected function mapCollectionToArray(Collection $collection): array
     {
-        $operationArray = $this->mapOperationCollectionToArray($collection);
-        return $this->mapOperationArrayToCsvString($operationArray);
-    }
-
-    private function mapOperationCollectionToArray(Collection $operationCollection): array
-    {
-        $mappedOperations = $operationCollection->map(function(Operation $operation) {
+        $mappedOperations = $collection->map(function(Operation $operation) {
             return [
                 $operation->getId(),
                 $operation->getType(),
@@ -27,11 +21,11 @@ class OperationCollectionMapper implements EntityCollectionMapperInterface
         return $mappedOperations->toArray();
     }
 
-    private function mapOperationArrayToCsvString(array $operationArray): string
+    protected function mapArrayToCsvString(array $operations): string
     {
         $csv = "id,type,amount\r\n";
 
-        foreach ($operationArray as $operation) {
+        foreach ($operations as $operation) {
             $csv .=  '"' . implode('","', $operation) . '"' . "\r\n";
         }
         return $csv;
