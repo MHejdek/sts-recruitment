@@ -16,10 +16,10 @@ class WalletManager
         $operation->setWallet($wallet);
     }
 
-    public function substractAmountFromWallet(Wallet $wallet, int $amount): void
+    public function subtractAmountFromWallet(Wallet $wallet, int $amount): void
     {
         $wallet->setAmount($wallet->getAmount() - $amount);
-        $operation = new Operation('substraction', $amount);
+        $operation = new Operation('subtraction', $amount);
         $operation->setWallet($wallet);
     }
 
