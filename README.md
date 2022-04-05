@@ -13,11 +13,9 @@
 
 #### Issue:
 
-The issue might occur when setting up the env on docker - according to ```https://github.com/doctrine/DoctrineMigrationsBundle/issues/393``` and the issue seems to occur on PHP8.0 and higher. 
+The issue might occur when setting up the env on docker - according to ```https://github.com/doctrine/DoctrineMigrationsBundle/issues/393``` and the issue seems to occur on PHP8.0 and higher.
 
-#### Solution: 
-
-You need to run database migrations twice or just execute ```docker/setup.sh``` twice and it will do it for you.
+**Although the issue appears the database migrations run properly.**
 
 ## Documentation:
 
@@ -31,4 +29,9 @@ You need to run database migrations twice or just execute ```docker/setup.sh``` 
 ### Command: 
 
 1. ```docker exec -it php /bin/bash``` - accessing docker php container
-2. ```bin/console app:export-csv <wallet_id>``` - Generating CSV file of Operations
+2. ```bin/console app:export-csv <wallet_id>``` - Generating CSV file of Operations that belongs to wallet
+
+### PHP Unit Tests:
+
+1. ```docker exec -it php /bin/bash``` - accessing docker php container
+2. ```bin/phpunit tests/Unit``` - runs unit tests
