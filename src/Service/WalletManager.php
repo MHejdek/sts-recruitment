@@ -12,18 +12,14 @@ class WalletManager
     public function addAmountToWallet(Wallet $wallet, int $amount): void
     {
         $wallet->setAmount($wallet->getAmount() + $amount);
-        $this->addOperationToWallet($wallet, 'addition', $amount);
+        $operation = new Operation('addition', $amount);
+        $operation->setWallet($wallet);
     }
 
     public function substractAmountFromWallet(Wallet $wallet, int $amount): void
     {
         $wallet->setAmount($wallet->getAmount() - $amount);
-        $this->addOperationToWallet($wallet, 'substraction', $amount);
-    }
-
-    private function addOperationToWallet(Wallet $wallet, string $type, int $amount): void
-    {
-        $operation = new Operation($type, $amount);
+        $operation = new Operation('substraction', $amount);
         $operation->setWallet($wallet);
     }
 
